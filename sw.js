@@ -5,7 +5,7 @@
 
 'use strict';
 
-const CACHE_NAME = 'flyer-checker-v2';  // バージョン変更で古いキャッシュを強制削除
+const CACHE_NAME = 'flyer-checker-v3';  // バージョン変更で古いキャッシュを強制削除
 
 // キャッシュ対象のリソース（アプリシェル）
 const APP_SHELL = [

@@ -19,8 +19,8 @@
 const GAS_ENDPOINT = '/api/analyze';
 
 // 画像圧縮設定
-const IMAGE_MAX_PX  = 1600;   // 長辺の最大ピクセル数
-const IMAGE_QUALITY = 0.85;   // JPEG品質（0〜1）
+const IMAGE_MAX_PX  = 1024;   // 長辺の最大ピクセル数（モバイル対応で縮小）
+const IMAGE_QUALITY = 0.7;    // JPEG品質（0〜1）送信サイズ削減
 
 // ============================================================
 // DOM 要素の参照
