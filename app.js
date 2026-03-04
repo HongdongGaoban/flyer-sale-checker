@@ -14,7 +14,9 @@
 // 設定
 // ============================================================
 
-const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzrgSQsBDDSO71JR2bOeTxb45cqI2u3YB9RmK6Lnqmip7RoGBr_fwDpVen5tmsUF1cA_A/exec';
+// Vercel rewrites (/api/analyze → GAS) 経由でCORSを回避
+// vercel.json の rewrites 設定と対応
+const GAS_ENDPOINT = '/api/analyze';
 
 // 画像圧縮設定
 const IMAGE_MAX_PX  = 1600;   // 長辺の最大ピクセル数
