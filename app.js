@@ -171,28 +171,53 @@ async function handleAnalyze() {
  */
 async function callGasApi(base64, mimeType) {
   const requestBody = JSON.stringify({ image: base64, mimeType: mimeType });
+  const MAX_RETRIES = 2;
 
-  // GASはCORSが制限されるため、no-corsモードを使うか
-  // Vercelのrewrites設定でプロキシする。
-  // ここではcorsモードで試みて、失敗時はno-corsフォールバックを検討。
-  const response = await fetch(GAS_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: requestBody,
-  });
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[API] 試行 ${attempt}/${MAX_RETRIES}, payload=${(requestBody.length / 1024).toFixed(0)}KB`);
 
-  if (!response.ok) {
-    throw new Error(`サーバーエラー: HTTP ${response.status}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 55000); // 55秒タイムアウト
+
+      const response = await fetch(GAS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`サーバーエラー: HTTP ${response.status}`);
+      }
+
+      const json = await response.json();
+
+      if (json.status !== 'ok') {
+        const detail = json.detail ? `\n詳細: ${json.detail}` : '';
+        throw new Error((json.message || '解析に失敗しました') + detail);
+      }
+
+      return json.data;
+
+    } catch (e) {
+      console.warn(`[API] 試行 ${attempt} 失敗:`, e.name, e.message);
+      // ネットワークエラー（Load failed / Failed to fetch）でリトライ可能
+      const isNetworkError = e.name === 'TypeError' || e.name === 'AbortError';
+      if (isNetworkError && attempt < MAX_RETRIES) {
+        loadingText.textContent = '通信エラー…再試行中...';
+        await new Promise(r => setTimeout(r, 2000)); // 2秒待ってリトライ
+        continue;
+      }
+      // リトライ不可またはサーバーエラー
+      if (e.name === 'AbortError') {
+        throw new Error('サーバーの応答がタイムアウトしました（55秒）');
+      }
+      throw e;
+    }
   }
-
-  const json = await response.json();
-
-  if (json.status !== 'ok') {
-    const detail = json.detail ? `\n詳細: ${json.detail}` : '';
-    throw new Error((json.message || '解析に失敗しました') + detail);
-  }
-
-  return json.data;
 }
 
 // ============================================================
