@@ -188,7 +188,8 @@ async function callGasApi(base64, mimeType) {
   const json = await response.json();
 
   if (json.status !== 'ok') {
-    throw new Error(json.message || '解析に失敗しました');
+    const detail = json.detail ? `\n詳細: ${json.detail}` : '';
+    throw new Error((json.message || '解析に失敗しました') + detail);
   }
 
   return json.data;
