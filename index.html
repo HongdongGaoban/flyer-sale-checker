@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2e7d32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="チラシチェッカー">
+  <meta name="description" content="チラシ画像をAIで解析してお得度を判定します">
+
+  <title>チラシ特売チェッカー</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-inner">
+      <span class="header-icon">🛒</span>
+      <h1 class="header-title">チラシ特売チェッカー</h1>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- アップロードエリア -->
+    <section class="upload-section card" id="uploadSection">
+      <p class="upload-hint">チラシ画像を撮影またはファイルから選択してください</p>
+
+      <div class="button-group">
+        <!-- カメラ撮影ボタン -->
+        <label class="btn btn-primary" for="cameraInput">
+          <span class="btn-icon">📷</span>
+          カメラで撮影
+        </label>
+        <input
+          type="file"
+          id="cameraInput"
+          accept="image/*"
+          capture="environment"
+          class="hidden-input"
+          aria-label="カメラで撮影"
+        >
+
+        <!-- ファイル選択ボタン -->
+        <label class="btn btn-secondary" for="fileInput">
+          <span class="btn-icon">🖼️</span>
+          画像を選択
+        </label>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          class="hidden-input"
+          aria-label="ファイルから選択"
+        >
+      </div>
+    </section>
+
+    <!-- プレビューエリア -->
+    <section class="preview-section card" id="previewSection" hidden>
+      <h2 class="section-title">選択した画像</h2>
+      <div class="preview-container">
+        <img id="previewImage" class="preview-image" alt="チラシプレビュー">
+      </div>
+      <div class="button-group">
+        <button class="btn btn-primary btn-full" id="analyzeBtn">
+          <span class="btn-icon">🔍</span>
+          AI解析スタート
+        </button>
+        <button class="btn btn-ghost btn-full" id="resetBtn">
+          やり直す
+        </button>
+      </div>
+    </section>
+
+    <!-- ローディング -->
+    <section class="loading-section" id="loadingSection" hidden>
+      <div class="loading-spinner"></div>
+      <p class="loading-text" id="loadingText">チラシを解析中...</p>
+      <p class="loading-sub">AIが商品情報を読み取っています。しばらくお待ちください。</p>
+    </section>
+
+    <!-- エラー表示 -->
+    <section class="error-section card" id="errorSection" hidden>
+      <p class="error-icon">⚠️</p>
+      <p class="error-message" id="errorMessage">エラーが発生しました</p>
+      <button class="btn btn-secondary" id="errorRetryBtn">もう一度試す</button>
+    </section>
+
+    <!-- 結果エリア -->
+    <section class="results-section" id="resultsSection" hidden>
+      <!-- サマリー -->
+      <div class="summary-card card">
+        <h2 class="section-title">解析結果</h2>
+        <div class="summary-stats" id="summaryStats"></div>
+      </div>
+
+      <!-- 商品カード一覧 -->
+      <div class="products-list" id="productsList"></div>
+
+      <!-- リセットボタン -->
+      <div class="results-footer">
+        <button class="btn btn-secondary btn-full" id="newAnalysisBtn">
+          別のチラシを解析する
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 判定バッジの凡例 -->
+  <footer class="footer">
+    <div class="legend">
+      <span class="badge badge-excellent">◎</span> お買い得（-15%以上）
+      <span class="badge badge-good">○</span> やや安め（-5%〜-15%）
+      <span class="badge badge-normal">△</span> 相場並み
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

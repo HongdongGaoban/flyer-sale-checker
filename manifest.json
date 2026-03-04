@@ -1,0 +1,27 @@
+{
+  "name": "チラシ特売チェッカー",
+  "short_name": "チラシチェッカー",
+  "description": "チラシ画像をAIで解析してお得な特売商品を判定します",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2e7d32",
+  "background_color": "#f5f5f5",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "utilities"],
+  "screenshots": []
+}
