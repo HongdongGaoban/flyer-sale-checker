@@ -5,7 +5,7 @@
 
 'use strict';
 
-const CACHE_NAME = 'flyer-checker-v1';
+const CACHE_NAME = 'flyer-checker-v2';  // バージョン変更で古いキャッシュを強制削除
 
 // キャッシュ対象のリソース（アプリシェル）
 const APP_SHELL = [
@@ -59,10 +59,14 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // GASエンドポイントへのリクエストはキャッシュしない（常にネットワーク）
+  // Vercelプロキシ経由のAPIリクエストはキャッシュしない（POSTなので元々キャッシュ対象外だが明示）
+  if (url.pathname.startsWith('/api/')) {
+    return;  // SW をバイパスしてブラウザのネイティブ fetch に任せる
+  }
+
+  // GASエンドポイントへの直接リクエストはキャッシュしない（フォールバック用）
   if (url.hostname.includes('script.google.com')) {
-    event.respondWith(fetch(event.request));
-    return;
+    return;  // SW をバイパス（fetch を SW が呼ぶと CORS エラーになるため）
   }
 
   // e-Stat APIはキャッシュしない
