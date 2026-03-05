@@ -3,16 +3,37 @@
  * 共通ユーティリティ（Utils.gs の Node.js 移植）
  */
 
-import { JUDGMENT, FRESH_FOOD_KEYWORDS } from './config.js';
+import { JUDGMENT, FRESH_FOOD_ALIASES } from './config.js';
+
+// 起動時にフラットマップを構築（alias → canonical）
+const ALIAS_TO_CANONICAL = {};
+for (const [canonical, aliases] of Object.entries(FRESH_FOOD_ALIASES)) {
+  for (const alias of aliases) {
+    ALIAS_TO_CANONICAL[alias] = canonical;
+  }
+}
 
 /**
- * 商品カテゴリが生鮮食品かどうかを判定する
- * @param {string} category
- * @returns {boolean}
+ * Gemini が返した category から A系統の正規カテゴリ名を解決する
+ * @param {string} category - Gemini の出力 category
+ * @returns {string|null} 正規カテゴリ名（getEStatTargets().category と一致）。A系統対象外なら null
  */
-export function isFreshFood(category) {
-  if (!category) return false;
-  return FRESH_FOOD_KEYWORDS.some(keyword => category.includes(keyword));
+export function resolveFreshCategory(category) {
+  if (!category) return null;
+
+  // 1. 完全一致（最も高速・確実）
+  if (ALIAS_TO_CANONICAL[category]) return ALIAS_TO_CANONICAL[category];
+
+  // 2. 部分一致（category にエイリアスが含まれる場合、最長一致を採用）
+  let bestMatch = null;
+  let bestLen = 0;
+  for (const [alias, canonical] of Object.entries(ALIAS_TO_CANONICAL)) {
+    if (category.includes(alias) && alias.length > bestLen) {
+      bestMatch = canonical;
+      bestLen = alias.length;
+    }
+  }
+  return bestMatch;
 }
 
 /**

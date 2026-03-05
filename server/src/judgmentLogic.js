@@ -5,7 +5,7 @@
  * B系統: 加工食品 × 自己学習底値 DB
  */
 
-import { isFreshFood, calcDiscountRate, getRank, log } from './utils.js';
+import { resolveFreshCategory, calcDiscountRate, getRank, log } from './utils.js';
 import { convertUnit, getMarketPrice, findLowestRecord, insertLowestRecord, updateLowestRecord } from './dataService.js';
 
 /**
@@ -41,9 +41,10 @@ async function judgeOne(product) {
     return { ...result, judgment: 'skip', skip_reason: '容量が不明なため計算できません（1パック・1袋等）' };
   }
 
-  // ③ カテゴリで処理を分岐
-  if (isFreshFood(product.category)) {
-    return judgeTrackA(result);
+  // ③ カテゴリで処理を分岐（正規カテゴリ名に解決できればA系統）
+  const resolvedCategory = resolveFreshCategory(product.category);
+  if (resolvedCategory) {
+    return judgeTrackA(result, resolvedCategory);
   } else {
     return judgeTrackB(result);
   }
@@ -53,26 +54,27 @@ async function judgeOne(product) {
 // A系統: 生鮮食品 × e-Stat 相場比較
 // ============================================================
 
-async function judgeTrackA(product) {
+async function judgeTrackA(product, resolvedCategory) {
   try {
-    const converted = await convertUnit(product.category, product.base_unit, product.amount_val);
+    // resolvedCategory（正規名）で Firestore を検索することで表記ゆれを吸収
+    const converted = await convertUnit(resolvedCategory, product.base_unit, product.amount_val);
 
     if (!converted) {
       return {
         ...product,
         judgment: 'unknown',
         track: 'A',
-        skip_reason: `単位換算マスターに "${product.category} / ${product.base_unit}" が未登録`,
+        skip_reason: `単位換算マスターに "${resolvedCategory} / ${product.base_unit}" が未登録`,
       };
     }
 
-    const market = await getMarketPrice(product.category);
+    const market = await getMarketPrice(resolvedCategory);
     if (!market || !market.avgPrice) {
       return {
         ...product,
         judgment: 'unknown',
         track: 'A',
-        skip_reason: `相場データマスターに "${product.category}" の価格データがありません。e-Stat バッチを実行してください`,
+        skip_reason: `相場データマスターに "${resolvedCategory}" の価格データがありません。e-Stat バッチを実行してください`,
       };
     }
 
