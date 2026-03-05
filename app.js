@@ -171,58 +171,37 @@ async function handleAnalyze() {
  */
 async function callGasApi(base64, mimeType) {
   const requestBody = JSON.stringify({ image: base64, mimeType: mimeType });
-  const MAX_RETRIES = 2;
+  console.log(`[API] リクエスト送信, payload=${(requestBody.length / 1024).toFixed(0)}KB`);
 
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      console.log(`[API] 試行 ${attempt}/${MAX_RETRIES}, payload=${(requestBody.length / 1024).toFixed(0)}KB`);
+  try {
+    const response = await fetch(GAS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: requestBody,
+      redirect: 'follow',
+      mode: 'cors',
+    });
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 55000); // 55秒タイムアウト
-
-      const response = await fetch(GAS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody,
-        signal: controller.signal,
-        redirect: 'follow',
-        mode: 'cors',
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`サーバーエラー: HTTP ${response.status}`);
-      }
-
-      const json = await response.json();
-
-      if (json.status !== 'ok') {
-        const detail = json.detail ? `\n詳細: ${json.detail}` : '';
-        throw new Error((json.message || '解析に失敗しました') + detail);
-      }
-
-      return json.data;
-
-    } catch (e) {
-      console.warn(`[API] 試行 ${attempt} 失敗:`, e.name, e.message);
-      // ネットワークエラー（Load failed / Failed to fetch）でリトライ可能
-      const isNetworkError = e.name === 'TypeError' || e.name === 'AbortError';
-      if (isNetworkError && attempt < MAX_RETRIES) {
-        loadingText.textContent = '通信エラー…再試行中...';
-        await new Promise(r => setTimeout(r, 2000)); // 2秒待ってリトライ
-        continue;
-      }
-      // リトライ不可またはサーバーエラー
-      if (e.name === 'AbortError') {
-        throw new Error('サーバーの応答がタイムアウトしました（55秒）');
-      }
-      // iOS Safari では "Load failed"、他ブラウザでは "Failed to fetch" になる
-      if (e.name === 'TypeError') {
-        throw new Error('通信に失敗しました。電波状況を確認してから再度お試しください。');
-      }
-      throw e;
+    if (!response.ok) {
+      throw new Error(`サーバーエラー: HTTP ${response.status}`);
     }
+
+    const json = await response.json();
+
+    if (json.status !== 'ok') {
+      const detail = json.detail ? `\n詳細: ${json.detail}` : '';
+      throw new Error((json.message || '解析に失敗しました') + detail);
+    }
+
+    return json.data;
+
+  } catch (e) {
+    console.error('[API] リクエスト失敗:', e.name, e.message);
+    if (e.name === 'TypeError') {
+      // iOS Safari: "Load failed" / 他: "Failed to fetch"
+      throw new Error('通信に失敗しました。電波状況を確認してから再度お試しください。');
+    }
+    throw e;
   }
 }
 
