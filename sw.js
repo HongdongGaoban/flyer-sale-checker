@@ -5,7 +5,7 @@
 
 'use strict';
 
-const CACHE_NAME = 'flyer-checker-v3';  // バージョン変更で古いキャッシュを強制削除
+const CACHE_NAME = 'flyer-checker-v4';  // バージョン変更で古いキャッシュを強制削除
 
 // キャッシュ対象のリソース（アプリシェル）
 const APP_SHELL = [
@@ -60,8 +60,11 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // Vercelプロキシ経由のAPIリクエストはキャッシュしない（POSTなので元々キャッシュ対象外だが明示）
+  // iOS Safari では return だけだと POST リクエストが "Load failed" になるため
+  // event.respondWith() を明示的に呼び出してネットワークに転送する
   if (url.pathname.startsWith('/api/')) {
-    return;  // SW をバイパスしてブラウザのネイティブ fetch に任せる
+    event.respondWith(fetch(event.request));
+    return;
   }
 
   // GASエンドポイントへの直接リクエストはキャッシュしない（フォールバック用）

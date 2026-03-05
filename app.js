@@ -185,6 +185,8 @@ async function callGasApi(base64, mimeType) {
         headers: { 'Content-Type': 'application/json' },
         body: requestBody,
         signal: controller.signal,
+        redirect: 'follow',
+        mode: 'cors',
       });
 
       clearTimeout(timeoutId);
@@ -214,6 +216,10 @@ async function callGasApi(base64, mimeType) {
       // リトライ不可またはサーバーエラー
       if (e.name === 'AbortError') {
         throw new Error('サーバーの応答がタイムアウトしました（55秒）');
+      }
+      // iOS Safari では "Load failed"、他ブラウザでは "Failed to fetch" になる
+      if (e.name === 'TypeError') {
+        throw new Error('通信に失敗しました。電波状況を確認してから再度お試しください。');
       }
       throw e;
     }
