@@ -5,7 +5,7 @@
 
 'use strict';
 
-const CACHE_NAME = 'flyer-checker-v5';  // バージョン変更で古いキャッシュを強制削除
+const CACHE_NAME = 'flyer-checker-v6';  // バージョン変更で古いキャッシュを強制削除
 
 // キャッシュ対象のリソース（アプリシェル）
 const APP_SHELL = [
@@ -62,18 +62,27 @@ self.addEventListener('fetch', event => {
   // Vercelプロキシ経由のAPIリクエストはキャッシュしない（POSTなので元々キャッシュ対象外だが明示）
   // iOS Safari では fetch(event.request) をそのまま渡すとリクエストボディが失われる
   // バグがあるため、ボディを明示的に読み取り新しいリクエストとして再送する
+  //
+  // さらに iOS Safari では req.headers をそのまま渡すと Content-Length などの
+  // 禁止ヘッダー（forbidden headers）が含まれ "Load failed" エラーになるため、
+  // Content-Type のみ手動で引き継ぎ、mode: 'same-origin' を明示する
   if (url.pathname.startsWith('/api/')) {
     const req = event.request;
     event.respondWith(
-      req.text().then(body =>
-        fetch(req.url, {
+      req.text().then(body => {
+        const headers = new Headers();
+        const ct = req.headers.get('Content-Type');
+        if (ct) headers.set('Content-Type', ct);
+
+        return fetch(req.url, {
           method: req.method,
-          headers: req.headers,
+          headers: headers,
           body: body || undefined,
-          redirect: 'follow',
+          mode: 'same-origin',
           credentials: req.credentials,
-        })
-      )
+          redirect: 'follow',
+        });
+      })
     );
     return;
   }
