@@ -1,0 +1,22 @@
+{
+  "name": "flyer-sale-checker-server",
+  "version": "1.0.0",
+  "description": "チラシ特売チェッカー Cloud Run バックエンド",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "import-sheets": "node scripts/importSheets.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.10.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
