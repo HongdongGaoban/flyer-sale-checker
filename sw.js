@@ -5,7 +5,7 @@
 
 'use strict';
 
-const CACHE_NAME = 'flyer-checker-v6';  // バージョン変更で古いキャッシュを強制削除
+const CACHE_NAME = 'flyer-checker-v7';  // バージョン変更で古いキャッシュを強制削除
 
 // キャッシュ対象のリソース（アプリシェル）
 const APP_SHELL = [
@@ -59,32 +59,18 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Vercelプロキシ経由のAPIリクエストはキャッシュしない（POSTなので元々キャッシュ対象外だが明示）
-  // iOS Safari では fetch(event.request) をそのまま渡すとリクエストボディが失われる
-  // バグがあるため、ボディを明示的に読み取り新しいリクエストとして再送する
+  // APIリクエストはSWをバイパスしてブラウザのネイティブfetchに委ねる
   //
-  // さらに iOS Safari では req.headers をそのまま渡すと Content-Length などの
-  // 禁止ヘッダー（forbidden headers）が含まれ "Load failed" エラーになるため、
-  // Content-Type のみ手動で引き継ぎ、mode: 'same-origin' を明示する
+  // 【理由】iOS SafariはSWのevent.respondWith()が長時間（~10秒超）解決しない場合、
+  // SW fetchイベントを強制終了し "FetchEvent.respondWith received an error:
+  // TypeError: Load failed" を発生させる。GASの処理に10〜20秒かかる場合に
+  // このタイムアウトに引っかかるため、SWを介さずブラウザ直接fetchにする。
+  //
+  // event.respondWith() を呼ばずにreturnすると、ブラウザがそのままネットワーク
+  // fetchを実行する（SWバイパス）。ページレベルのfetchタイムアウトは60秒以上あり、
+  // GASの処理時間（13〜19秒）に十分対応できる。
   if (url.pathname.startsWith('/api/')) {
-    const req = event.request;
-    event.respondWith(
-      req.text().then(body => {
-        const headers = new Headers();
-        const ct = req.headers.get('Content-Type');
-        if (ct) headers.set('Content-Type', ct);
-
-        return fetch(req.url, {
-          method: req.method,
-          headers: headers,
-          body: body || undefined,
-          mode: 'same-origin',
-          credentials: req.credentials,
-          redirect: 'follow',
-        });
-      })
-    );
-    return;
+    return; // SW をバイパス: ブラウザのネイティブ fetch に委ねる
   }
 
   // GASエンドポイントへの直接リクエストはキャッシュしない（フォールバック用）
