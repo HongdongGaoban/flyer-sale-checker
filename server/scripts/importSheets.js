@@ -76,6 +76,55 @@ const UNIT_CONVERSION_DATA = [
   // 牛乳
   { category: '牛乳',       flyerUnit: 'ml',  convertToBase: 1,    baseUnit: 'ml' },
   { category: '牛乳',       flyerUnit: 'L',   convertToBase: 1000, baseUnit: 'ml' },
+  // ---- 追加野菜（Phase 1） ----
+  // はくさい（1玉 ≈ 1000g、1/4カット ≈ 250g が一般的）
+  { category: 'はくさい',     flyerUnit: '玉',    convertToBase: 1000, baseUnit: 'g' },
+  { category: 'はくさい',     flyerUnit: 'カット', convertToBase: 250,  baseUnit: 'g' },
+  { category: 'はくさい',     flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // ブロッコリー（1株 ≈ 300g）
+  { category: 'ブロッコリー', flyerUnit: '個',    convertToBase: 300,  baseUnit: 'g' },
+  { category: 'ブロッコリー', flyerUnit: '株',    convertToBase: 300,  baseUnit: 'g' },
+  { category: 'ブロッコリー', flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // さつまいも（1個 ≈ 250g、袋売りは 500g が多い）
+  { category: 'さつまいも',   flyerUnit: '個',    convertToBase: 250,  baseUnit: 'g' },
+  { category: 'さつまいも',   flyerUnit: '袋',    convertToBase: 500,  baseUnit: 'g' },
+  { category: 'さつまいも',   flyerUnit: 'kg',    convertToBase: 1000, baseUnit: 'g' },
+  { category: 'さつまいも',   flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // ---- 豆腐（Phase 1） ----
+  // 豆腐（1丁 ≈ 300g が標準的な木綿/絹豆腐）
+  { category: '豆腐',         flyerUnit: '丁',    convertToBase: 300,  baseUnit: 'g' },
+  { category: '豆腐',         flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // ---- 果物（Phase 1） ----
+  // バナナ（1房 ≈ 5本 ≈ 500g、1本 ≈ 100g）
+  { category: 'バナナ',       flyerUnit: '房',    convertToBase: 500,  baseUnit: 'g' },
+  { category: 'バナナ',       flyerUnit: '本',    convertToBase: 100,  baseUnit: 'g' },
+  { category: 'バナナ',       flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // ---- 追加野菜（Phase 2） ----
+  // かぼちゃ（1個 ≈ 1500g、1/4カット ≈ 375g）
+  { category: 'かぼちゃ',     flyerUnit: '個',    convertToBase: 1500, baseUnit: 'g' },
+  { category: 'かぼちゃ',     flyerUnit: 'カット', convertToBase: 375,  baseUnit: 'g' },
+  { category: 'かぼちゃ',     flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // 生しいたけ（1パック ≈ 100g）
+  { category: '生しいたけ',   flyerUnit: 'パック', convertToBase: 100,  baseUnit: 'g' },
+  { category: '生しいたけ',   flyerUnit: '袋',    convertToBase: 100,  baseUnit: 'g' },
+  { category: '生しいたけ',   flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // えのきたけ（1袋 ≈ 200g）
+  { category: 'えのきたけ',   flyerUnit: '袋',    convertToBase: 200,  baseUnit: 'g' },
+  { category: 'えのきたけ',   flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // しめじ（1袋 ≈ 100g）
+  { category: 'しめじ',       flyerUnit: '袋',    convertToBase: 100,  baseUnit: 'g' },
+  { category: 'しめじ',       flyerUnit: 'パック', convertToBase: 100,  baseUnit: 'g' },
+  { category: 'しめじ',       flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // ---- 果物（Phase 2） ----
+  // りんご（1個 ≈ 300g）
+  { category: 'りんご',       flyerUnit: '個',    convertToBase: 300,  baseUnit: 'g' },
+  { category: 'りんご',       flyerUnit: 'kg',    convertToBase: 1000, baseUnit: 'g' },
+  { category: 'りんご',       flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
+  // みかん（1個 ≈ 100g、袋売りは 1kg が多い）
+  { category: 'みかん',       flyerUnit: '個',    convertToBase: 100,  baseUnit: 'g' },
+  { category: 'みかん',       flyerUnit: '袋',    convertToBase: 1000, baseUnit: 'g' },
+  { category: 'みかん',       flyerUnit: 'kg',    convertToBase: 1000, baseUnit: 'g' },
+  { category: 'みかん',       flyerUnit: 'g',     convertToBase: 1,    baseUnit: 'g' },
 ];
 
 // ============================================================

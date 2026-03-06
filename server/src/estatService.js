@@ -134,5 +134,21 @@ function getEStatTargets() {
     // ---- 卵・牛乳 ----
     { code: '01341', category: '卵',   itemName: '鶏卵',             unit: '個', baseMultiplier: 0.1   },
     { code: '01303', category: '牛乳', itemName: '牛乳（紙パック）', unit: 'ml', baseMultiplier: 0.001 },
+    // ---- 追加野菜（Phase 1） ----
+    { code: '01403', category: 'はくさい',     itemName: 'はくさい',     unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    { code: '01409', category: 'ブロッコリー', itemName: 'ブロッコリー', unit: 'g', baseMultiplier: 0.003333 }, // ¥/個 確認済み（1個≈300g として ¥/g に換算）
+    { code: '01411', category: 'さつまいも',   itemName: 'さつまいも',   unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    // ---- 豆腐（Phase 1） ----
+    { code: '01471', category: '豆腐',         itemName: '豆腐',         unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    // ---- 果物（Phase 1） ----
+    { code: '01581', category: 'バナナ',       itemName: 'バナナ',       unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    // ---- 追加野菜（Phase 2） ----
+    { code: '01433', category: 'かぼちゃ',     itemName: 'かぼちゃ',     unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    { code: '01438', category: '生しいたけ',   itemName: '生しいたけ',   unit: 'g', baseMultiplier: 0.01     }, // ¥/100g 想定（要確認）
+    { code: '01442', category: 'えのきたけ',   itemName: 'えのきたけ',   unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    { code: '01443', category: 'しめじ',       itemName: 'しめじ',       unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
+    // ---- 果物（Phase 2） ----
+    { code: '01502', category: 'りんご',       itemName: 'りんご',       unit: 'g', baseMultiplier: 0.003333 }, // ¥/個 確認済み（1個≈300g として ¥/g に換算）
+    { code: '01511', category: 'みかん',       itemName: 'みかん',       unit: 'g', baseMultiplier: 0.001    }, // ¥/kg 確認済み
   ];
 }
